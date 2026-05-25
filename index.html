@@ -1114,6 +1114,13 @@
       "frontLeftPocketTop"
     ];
     const corePartIdSet = new Set(corePartIds);
+    const starterCoreParts = corePartIds.map((id) => partsById.get(id)).filter(Boolean);
+    const starterCoreKeys = new Set(starterCoreParts.map((part) => part.materialKey || part.id));
+    const starterCoreAssignments = new Map(
+      starterCoreParts
+        .filter((part) => !part.fixedPatternId)
+        .map((part) => [part.materialKey || part.id, "denim"])
+    );
     const overlayExtras = [
       { type: "path", stroke: "#231f20", fill: "none", path: new Path2D("M232.76,202.82l4.64-13.79s1.17-22.82,6.56-22.82-6.21,20.19-6.21,20.19") },
       { type: "path", stroke: "#231f20", fill: "none", path: new Path2D("M406.01,202.82l-4.64-13.79s-1.17-22.82-6.56-22.82,6.21,20.19,6.21,20.19") },
@@ -1127,11 +1134,11 @@
     const tileCache = new Map();
     const state = {
       seed: Date.now() % 100000,
-      locked: new Set(),
+      locked: new Set(starterCoreKeys),
       selectedPart: "frontLeftSleeve",
       selectedPattern: patterns[0].id,
       hoveredPart: null,
-      assignments: new Map(),
+      assignments: new Map(starterCoreAssignments),
       patternScales: new Map(allPatterns.map((pattern) => [pattern.id, 100])),
       rotations: new Map()
     };
